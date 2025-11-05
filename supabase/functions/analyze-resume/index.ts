@@ -73,24 +73,56 @@ Return ONLY a JSON object with this exact structure:
     const analysis = JSON.parse(analysisData.choices[0].message.content);
     console.log("Analysis complete:", analysis);
 
-    // Step 2: Rewrite resume bullets
-    const rewritePrompt = `Based on this job description and the candidate's resume, rewrite 5 key resume bullets that are most relevant to this position. Make them achievement-oriented, quantifiable, and keyword-rich for ATS systems.
+    // Step 2: Generate complete revised resume
+    const resumeRevisionPrompt = `You are an expert resume writer and ATS optimization specialist. Analyze the resume and create a comprehensive revision tailored to the job description.
+
+Parse the original resume and provide revisions for EACH section with specific improvements:
 
 Job Description:
 ${jobDescription}
 
-Resume:
+Original Resume:
 ${resume}
 
 Key Alignments:
 ${analysis.alignments.map((a: any) => `- ${a.requirement}: ${a.match}`).join('\n')}
 
-Return ONLY a JSON object with this structure:
+Return ONLY a JSON object with this exact structure:
 {
-  "bullets": ["bullet 1", "bullet 2", "bullet 3", "bullet 4", "bullet 5"]
-}`;
+  "summary": {
+    "original": "extracted original summary/objective if present, or empty string",
+    "revised": "compelling ATS-optimized summary highlighting relevant skills and achievements"
+  },
+  "experience": [
+    {
+      "title": "job title",
+      "company": "company name",
+      "dates": "date range",
+      "location": "location if available",
+      "originalBullets": ["original bullet 1", "original bullet 2", ...],
+      "revisedBullets": ["optimized bullet with quantifiable achievements", ...]
+    }
+  ],
+  "skills": {
+    "original": ["skill1", "skill2", ...],
+    "revised": ["optimized skill1", "skill2", ...],
+    "added": ["new relevant skill from job description", ...]
+  },
+  "education": {
+    "original": "original education section text",
+    "revised": "enhanced education section with relevant coursework/achievements"
+  },
+  "rewrittenBullets": ["top 5 most impactful revised bullets for quick reference"]
+}
 
-    const rewriteResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+Important:
+- Extract ALL experience bullets from the original resume
+- Revise each bullet to be achievement-oriented with quantifiable results
+- Add relevant keywords from the job description naturally
+- Maintain truthfulness - enhance phrasing but don't fabricate experience
+- For skills, identify gaps between resume and job requirements`;
+
+    const resumeResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
@@ -99,20 +131,22 @@ Return ONLY a JSON object with this structure:
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages: [
-          { role: "system", content: "You are a professional resume writer. Always respond with valid JSON only." },
-          { role: "user", content: rewritePrompt },
+          { role: "system", content: "You are a professional resume writer. Always respond with valid, complete JSON only." },
+          { role: "user", content: resumeRevisionPrompt },
         ],
         response_format: { type: "json_object" },
       }),
     });
 
-    if (!rewriteResponse.ok) {
-      throw new Error("Failed to rewrite bullets");
+    if (!resumeResponse.ok) {
+      const errorText = await resumeResponse.text();
+      console.error("Resume revision API error:", resumeResponse.status, errorText);
+      throw new Error(`Failed to generate revised resume: ${errorText}`);
     }
 
-    const rewriteData = await rewriteResponse.json();
-    const rewrittenBullets = JSON.parse(rewriteData.choices[0].message.content).bullets;
-    console.log("Bullets rewritten");
+    const resumeData = await resumeResponse.json();
+    const revisedResume = JSON.parse(resumeData.choices[0].message.content);
+    console.log("Complete resume revision generated");
 
     // Step 3: Generate cover letter
     const coverLetterPrompt = `Write a compelling, personalized cover letter for this job application. Use the candidate's background and the key alignments to craft a narrative that demonstrates fit. Keep it professional, concise (3-4 paragraphs), and highlight quantifiable achievements.
@@ -155,8 +189,14 @@ Write the complete cover letter as plain text (no JSON, no markdown). Include a 
     const result = {
       matchScore: analysis.matchScore,
       alignments: analysis.alignments,
-      rewrittenBullets,
+      rewrittenBullets: revisedResume.rewrittenBullets,
       coverLetter,
+      revisedResume: {
+        summary: revisedResume.summary,
+        experience: revisedResume.experience,
+        skills: revisedResume.skills,
+        education: revisedResume.education,
+      },
     };
 
     return new Response(JSON.stringify(result), {

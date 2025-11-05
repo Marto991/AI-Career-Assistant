@@ -11,9 +11,10 @@ interface AnalysisFormProps {
   onAnalysisComplete: (result: AnalysisResult) => void;
   isAnalyzing: boolean;
   setIsAnalyzing: (value: boolean) => void;
+  setOriginalResume: (resume: string) => void;
 }
 
-const AnalysisForm = ({ onAnalysisComplete, isAnalyzing, setIsAnalyzing }: AnalysisFormProps) => {
+const AnalysisForm = ({ onAnalysisComplete, isAnalyzing, setIsAnalyzing, setOriginalResume }: AnalysisFormProps) => {
   const [resume, setResume] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const { toast } = useToast();
@@ -29,6 +30,7 @@ const AnalysisForm = ({ onAnalysisComplete, isAnalyzing, setIsAnalyzing }: Analy
     }
 
     setIsAnalyzing(true);
+    setOriginalResume(resume);
 
     try {
       const { data, error } = await supabase.functions.invoke("analyze-resume", {

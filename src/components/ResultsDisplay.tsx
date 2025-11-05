@@ -1,22 +1,78 @@
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Download, CheckCircle2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Download, CheckCircle2, FileText, FileCheck } from "lucide-react";
 import type { AnalysisResult } from "@/pages/Index";
 import { useToast } from "@/hooks/use-toast";
+import RevisedResumeDisplay from "./RevisedResumeDisplay";
+import { downloadResume, downloadCoverLetter, downloadBoth } from "@/services/resumeGenerator";
 
 interface ResultsDisplayProps {
   result: AnalysisResult;
+  originalResume: string;
 }
 
-const ResultsDisplay = ({ result }: ResultsDisplayProps) => {
+const ResultsDisplay = ({ result, originalResume }: ResultsDisplayProps) => {
   const { toast } = useToast();
+  const [isDownloading, setIsDownloading] = useState(false);
 
-  const handleDownload = () => {
-    toast({
-      title: "Download Ready",
-      description: "Your application materials would be downloaded as .docx (feature coming soon)",
-    });
+  const handleDownloadResume = async () => {
+    try {
+      setIsDownloading(true);
+      await downloadResume(result, originalResume);
+      toast({
+        title: "Resume Downloaded",
+        description: "Your revised resume has been downloaded as Revised_Resume.docx",
+      });
+    } catch (error) {
+      toast({
+        title: "Download Failed",
+        description: "Failed to generate resume document. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handleDownloadCoverLetter = async () => {
+    try {
+      setIsDownloading(true);
+      await downloadCoverLetter(result.coverLetter, originalResume);
+      toast({
+        title: "Cover Letter Downloaded",
+        description: "Your cover letter has been downloaded as Cover_Letter.docx",
+      });
+    } catch (error) {
+      toast({
+        title: "Download Failed",
+        description: "Failed to generate cover letter document. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handleDownloadBoth = async () => {
+    try {
+      setIsDownloading(true);
+      await downloadBoth(result, originalResume);
+      toast({
+        title: "Documents Downloaded",
+        description: "Both your resume and cover letter have been downloaded",
+      });
+    } catch (error) {
+      toast({
+        title: "Download Failed",
+        description: "Failed to generate documents. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   const getScoreColor = (score: number) => {
@@ -67,36 +123,70 @@ const ResultsDisplay = ({ result }: ResultsDisplayProps) => {
         </div>
       </Card>
 
-      {/* Rewritten Bullets */}
-      <Card className="p-8 shadow-lg border-2">
-        <h2 className="text-2xl font-bold mb-6">Optimized Resume Bullets</h2>
-        <div className="space-y-3">
-          {result.rewrittenBullets.map((bullet, idx) => (
-            <div key={idx} className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg">
-              <span className="text-accent font-bold">•</span>
-              <p className="flex-1 text-sm">{bullet}</p>
+      {/* Tabbed Content for Resume & Cover Letter */}
+      <Tabs defaultValue="revised-resume" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="revised-resume">Full Revised Resume</TabsTrigger>
+          <TabsTrigger value="quick-bullets">Quick Bullets</TabsTrigger>
+          <TabsTrigger value="cover-letter">Cover Letter</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="revised-resume" className="mt-6">
+          <RevisedResumeDisplay result={result} />
+        </TabsContent>
+
+        <TabsContent value="quick-bullets" className="mt-6">
+          <Card className="p-8 shadow-lg border-2">
+            <h2 className="text-2xl font-bold mb-6">Top 5 Optimized Resume Bullets</h2>
+            <div className="space-y-3">
+              {result.rewrittenBullets.map((bullet, idx) => (
+                <div key={idx} className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg">
+                  <span className="text-accent font-bold">•</span>
+                  <p className="flex-1 text-sm">{bullet}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </Card>
+          </Card>
+        </TabsContent>
 
-      {/* Cover Letter */}
-      <Card className="p-8 shadow-lg border-2">
-        <h2 className="text-2xl font-bold mb-6">Personalized Cover Letter</h2>
-        <div className="prose prose-sm max-w-none">
-          <p className="whitespace-pre-wrap text-sm leading-relaxed">{result.coverLetter}</p>
-        </div>
-      </Card>
+        <TabsContent value="cover-letter" className="mt-6">
+          <Card className="p-8 shadow-lg border-2">
+            <h2 className="text-2xl font-bold mb-6">Personalized Cover Letter</h2>
+            <div className="prose prose-sm max-w-none">
+              <p className="whitespace-pre-wrap text-sm leading-relaxed">{result.coverLetter}</p>
+            </div>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
-      {/* Download Button */}
-      <div className="flex justify-center">
+      {/* Download Buttons */}
+      <div className="flex flex-wrap justify-center gap-4">
         <Button
-          onClick={handleDownload}
+          onClick={handleDownloadResume}
           size="lg"
+          disabled={isDownloading}
           className="bg-gradient-to-r from-primary to-accent hover:opacity-90"
         >
+          <FileText className="mr-2 h-5 w-5" />
+          Download Resume (.docx)
+        </Button>
+        <Button
+          onClick={handleDownloadCoverLetter}
+          size="lg"
+          disabled={isDownloading}
+          variant="outline"
+        >
+          <FileCheck className="mr-2 h-5 w-5" />
+          Download Cover Letter (.docx)
+        </Button>
+        <Button
+          onClick={handleDownloadBoth}
+          size="lg"
+          disabled={isDownloading}
+          className="bg-gradient-to-r from-secondary to-primary hover:opacity-90"
+        >
           <Download className="mr-2 h-5 w-5" />
-          Download Application Materials
+          Download Both
         </Button>
       </div>
     </div>

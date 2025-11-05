@@ -12,10 +12,34 @@ export interface AnalysisResult {
   }>;
   rewrittenBullets: string[];
   coverLetter: string;
+  revisedResume: {
+    summary: {
+      original: string;
+      revised: string;
+    };
+    experience: Array<{
+      title: string;
+      company: string;
+      dates: string;
+      location?: string;
+      originalBullets: string[];
+      revisedBullets: string[];
+    }>;
+    skills: {
+      original: string[];
+      revised: string[];
+      added: string[];
+    };
+    education: {
+      original: string;
+      revised: string;
+    };
+  };
 }
 
 const Index = () => {
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [originalResume, setOriginalResume] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   return (
@@ -26,8 +50,9 @@ const Index = () => {
           onAnalysisComplete={setResult}
           isAnalyzing={isAnalyzing}
           setIsAnalyzing={setIsAnalyzing}
+          setOriginalResume={setOriginalResume}
         />
-        {result && <ResultsDisplay result={result} />}
+        {result && <ResultsDisplay result={result} originalResume={originalResume} />}
       </main>
     </div>
   );
