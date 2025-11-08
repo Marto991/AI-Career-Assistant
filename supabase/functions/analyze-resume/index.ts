@@ -6,6 +6,12 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Helper function to clean JSON from markdown code blocks
+function cleanJsonResponse(content: string): string {
+  // Remove markdown code blocks if present
+  return content.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -70,7 +76,8 @@ Return ONLY a JSON object with this exact structure:
     }
 
     const analysisData = await analysisResponse.json();
-    const analysis = JSON.parse(analysisData.choices[0].message.content);
+    const cleanedAnalysisContent = cleanJsonResponse(analysisData.choices[0].message.content);
+    const analysis = JSON.parse(cleanedAnalysisContent);
     console.log("Analysis complete:", analysis);
 
     // Step 2: Generate complete revised resume
@@ -145,7 +152,8 @@ Important:
     }
 
     const resumeData = await resumeResponse.json();
-    const revisedResume = JSON.parse(resumeData.choices[0].message.content);
+    const cleanedResumeContent = cleanJsonResponse(resumeData.choices[0].message.content);
+    const revisedResume = JSON.parse(cleanedResumeContent);
     console.log("Complete resume revision generated");
 
     // Step 3: Generate cover letter
