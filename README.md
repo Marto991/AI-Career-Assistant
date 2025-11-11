@@ -1,7 +1,7 @@
 AI Career Assistant
 Project Information
 
-URL: https://your-vercel-app-url.vercel.app
+URL: https://ai-career-assistant-e0b7onmo6-marto991s-projects.vercel.app/
 
 Overview
 
