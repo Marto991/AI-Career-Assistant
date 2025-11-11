@@ -1,73 +1,111 @@
-# Welcome to your Lovable project
+AI Career Assistant
+Project Information
 
-## Project info
+URL: https://your-vercel-app-url.vercel.app
 
-**URL**: https://lovable.dev/projects/50c34129-0657-435a-8c52-41567facd808
+Overview
 
-## How can I edit this code?
+The AI Career Assistant is an intelligent web application that helps job seekers optimize their resumes and application materials.
+It compares a candidate’s resume to a target job description, calculates a match score, identifies missing keywords, and automatically generates a revised resume and a personalized cover letter.
 
-There are several ways of editing your application.
+This project integrates AI with a clean, responsive interface to help users save time and improve the quality of their applications.
 
-**Use Lovable**
+Editing and Development
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/50c34129-0657-435a-8c52-41567facd808) and start prompting.
+You can edit and develop the project using your preferred workflow.
 
-Changes made via Lovable will be committed automatically to this repo.
+🖥️ Local Development
 
-**Use your preferred IDE**
+Clone the Repository
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
 git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
-npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+Install Dependencies
+
+npm install
+
+
+Start the Development Server
+
 npm run dev
-```
 
-**Edit a file directly in GitHub**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+This will start the app locally with hot-reload and live preview enabled.
 
-**Use GitHub Codespaces**
+💻 GitHub Codespaces (Optional)
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Open your repository on GitHub.
 
-## What technologies are used for this project?
+Click Code → Codespaces → New Codespace.
 
-This project is built with:
+Develop directly in the browser, then commit and push your changes.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+🧩 Edit Directly in GitHub
 
-## How can I deploy this project?
+Navigate to the desired file.
 
-Simply open [Lovable](https://lovable.dev/projects/50c34129-0657-435a-8c52-41567facd808) and click on Share -> Publish.
+Click the ✏️ Edit button.
 
-## Can I connect a custom domain to my Lovable project?
+Make changes, commit, and push.
 
-Yes, you can!
+Technologies Used
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+React + TypeScript – component-based frontend with static typing
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Vite – fast build tool and dev server
+
+Tailwind CSS + shadcn/ui – responsive styling and modern UI components
+
+Supabase (Edge Function) – backend processing and API integration
+
+Google Gemini 2.5 Flash – AI model for resume analysis and text generation
+
+Environment Variables
+
+To configure the project for local or production use, define the following variables in a .env file at the project root:
+
+# Supabase configuration
+VITE_SUPABASE_URL=<your_supabase_project_url>
+VITE_SUPABASE_ANON_KEY=<your_supabase_anon_key>
+
+# AI model or API keys
+VITE_GEMINI_API_KEY=<your_gemini_model_key>
+
+# Optional configuration
+VITE_API_ENDPOINT=<custom_backend_url_if_applicable>
+
+
+🔒 Never commit your .env file to GitHub.
+Use Vercel’s Environment Variables tab to securely store and manage secrets for deployment.
+
+Deployment
+
+The project is deployed on Vercel for fast, automatic CI/CD hosting.
+
+To deploy updates:
+
+Commit and push your latest changes to GitHub.
+
+Vercel automatically detects new commits and rebuilds your project.
+
+Visit your Vercel dashboard to view build logs or manage custom domains.
+
+Notes for Deployment
+
+Ensure that your vite.config.ts only includes required plugins (e.g., react()), and that no unused packages or tags remain from local testing.
+
+Verify that your index.html includes only relevant meta tags and assets (e.g., project title, description, and favicon).
+
+Set up your environment variables on Vercel under Project Settings → Environment Variables.
+
+When the build completes, the production URL will be available instantly.
+
+Credits
+
+Developed by Martin Mitrevski
+University of Massachusetts Dartmouth – Fall 2025
+📧 martin.mitrevski91@gmail.com
+
+🔗 GitHub Repository
