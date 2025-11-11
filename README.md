@@ -5,107 +5,89 @@ URL: https://ai-career-assistant-e0b7onmo6-marto991s-projects.vercel.app/
 
 Overview
 
-The AI Career Assistant is an intelligent web application that helps job seekers optimize their resumes and application materials.
-It compares a candidate’s resume to a target job description, calculates a match score, identifies missing keywords, and automatically generates a revised resume and a personalized cover letter.
+The AI Career Assistant is an intelligent web application designed to help job seekers optimize their resumes and application materials.
+It compares a candidate’s resume to a target job description, calculates a match score, identifies strengths and gaps, and generates a revised resume and personalized cover letter in real time.
 
-This project integrates AI with a clean, responsive interface to help users save time and improve the quality of their applications.
+By leveraging advanced AI and intuitive design, this platform simplifies the job application process and improves the likelihood of passing Applicant Tracking Systems (ATS) and recruiter screening.
 
-Editing and Development
+Users can:
 
-You can edit and develop the project using your preferred workflow.
+Upload or paste their resume and a job description.
 
-🖥️ Local Development
+Receive an AI-generated match score (0–100) and detailed alignment analysis.
 
-Clone the Repository
+View a complete, revised resume with improved formatting and optimized sections.
 
-git clone <YOUR_GIT_URL>
-cd <YOUR_PROJECT_NAME>
+Generate a customized cover letter tailored to the same job description.
 
+Download both documents instantly as .docx files.
 
-Install Dependencies
+No installation or local setup is required — the app runs entirely in the browser.
 
-npm install
+Features
 
+Resume Analysis – Calculates a match score between resume and job description.
 
-Start the Development Server
+Alignment Breakdown – Highlights how each requirement aligns with experience.
 
-npm run dev
+Resume Revision – Generates a full before/after version with improved sections.
 
+Cover Letter Generation – Writes a tailored, job-specific letter.
 
-This will start the app locally with hot-reload and live preview enabled.
-
-💻 GitHub Codespaces (Optional)
-
-Open your repository on GitHub.
-
-Click Code → Codespaces → New Codespace.
-
-Develop directly in the browser, then commit and push your changes.
-
-🧩 Edit Directly in GitHub
-
-Navigate to the desired file.
-
-Click the ✏️ Edit button.
-
-Make changes, commit, and push.
+Document Export – Enables one-click downloads of the resume, cover letter, or both.
 
 Technologies Used
 
-React + TypeScript – component-based frontend with static typing
+React + TypeScript – modern frontend architecture
 
-Vite – fast build tool and dev server
+Vite – fast build and development framework
 
-Tailwind CSS + shadcn/ui – responsive styling and modern UI components
+Tailwind CSS + shadcn/ui – responsive and elegant user interface
 
-Supabase (Edge Function) – backend processing and API integration
+Supabase (Edge Function) – backend logic and API endpoint management
 
-Google Gemini 2.5 Flash – AI model for resume analysis and text generation
+Google Gemini 2.5 Flash – AI model powering analysis and text generation
 
 Environment Variables
 
-To configure the project for local or production use, define the following variables in a .env file at the project root:
+For secure configuration during deployment, define the following variables in your Vercel project settings (or a .env file for local testing):
 
 # Supabase configuration
 VITE_SUPABASE_URL=<your_supabase_project_url>
 VITE_SUPABASE_ANON_KEY=<your_supabase_anon_key>
 
-# AI model or API keys
+# AI model / API keys
 VITE_GEMINI_API_KEY=<your_gemini_model_key>
 
-# Optional configuration
+# Optional backend API endpoint
 VITE_API_ENDPOINT=<custom_backend_url_if_applicable>
 
 
-🔒 Never commit your .env file to GitHub.
-Use Vercel’s Environment Variables tab to securely store and manage secrets for deployment.
+🔒 Keep all API keys private. Do not commit your .env file to version control.
 
 Deployment
 
-The project is deployed on Vercel for fast, automatic CI/CD hosting.
+The project is hosted and automatically deployed via Vercel.
 
-To deploy updates:
+Deployment Steps
 
-Commit and push your latest changes to GitHub.
+Push updates to your GitHub repository.
 
-Vercel automatically detects new commits and rebuilds your project.
+Vercel detects new commits and triggers a fresh build.
 
-Visit your Vercel dashboard to view build logs or manage custom domains.
+The live version is updated instantly at your public URL.
 
-Notes for Deployment
+Deployment Notes
 
-Ensure that your vite.config.ts only includes required plugins (e.g., react()), and that no unused packages or tags remain from local testing.
+Ensure only required plugins are active in vite.config.ts (e.g., react()).
 
-Verify that your index.html includes only relevant meta tags and assets (e.g., project title, description, and favicon).
+Confirm that index.html includes accurate meta tags (title, description, favicon).
 
-Set up your environment variables on Vercel under Project Settings → Environment Variables.
+Store all environment variables securely in Vercel’s Environment Variables tab.
 
-When the build completes, the production URL will be available instantly.
+After build completion, your production URL will be active immediately.
 
-Credits
 
 Developed by Martin Mitrevski
 University of Massachusetts Dartmouth – Fall 2025
 📧 martin.mitrevski91@gmail.com
-
-🔗 GitHub Repository
