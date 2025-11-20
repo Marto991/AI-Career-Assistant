@@ -107,18 +107,44 @@ Return ONLY a JSON object with this exact structure:
       "dates": "date range",
       "location": "location if available",
       "originalBullets": ["original bullet 1", "original bullet 2", ...],
-      "revisedBullets": ["Each bullet MUST: (1) Start with strong action verb (Managed, Led, Developed, Implemented, Optimized, etc.), (2) Include specific quantifiable results with numbers/percentages when possible (e.g., 'reduced costs by 15%', 'improved efficiency by 30%'), (3) Follow parallel structure across all bullets, (4) Use past tense for completed work, present tense only for current role, (5) Be 1-2 concise lines maximum, (6) Emphasize both technical skills AND transferable skills (leadership, communication, analytical thinking), (7) Tie achievements to business outcomes"]
+      "revisedBullets": ["MUST start with action verb, include quantifiable metrics, 1-2 lines, highlight both technical and transferable skills, tie to business outcomes"]
     }
   ],
   "skills": {
     "original": ["skill1", "skill2", ...],
-    "revised": ["Technical skills using standard terminology (Python, SQL, Machine Learning, Tableau, etc.) AND transferable skills (Leadership, Communication, Problem-solving, Team Collaboration)"],
-    "added": ["Relevant technical and soft skills from job description not present in original resume"]
+    "categories": [
+      {
+        "name": "Programming & Tools",
+        "skills": ["Python", "SQL", "R", "Git", "etc."]
+      },
+      {
+        "name": "Data Science & Analytics",
+        "skills": ["Machine Learning", "Statistical Analysis", "Data Visualization", "etc."]
+      },
+      {
+        "name": "Soft Skills",
+        "skills": ["Leadership", "Communication", "Problem-solving", "Team Collaboration"]
+      }
+    ],
+    "added": ["Relevant skills from job description not in original"]
   },
-  "education": {
-    "original": "original education section text",
-    "revised": "Enhanced education section with degree, institution, relevant coursework, and academic achievements"
-  },
+  "projects": [
+    {
+      "title": "Project name",
+      "description": "Brief description",
+      "technologies": ["tech1", "tech2"],
+      "bullets": ["Achievement or detail about project"]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Degree name",
+      "institution": "Institution name",
+      "dates": "Graduation date or date range",
+      "details": "GPA, relevant coursework, or honors if applicable"
+    }
+  ],
+  "honors": ["Honor or affiliation 1", "Honor or affiliation 2"],
   "rewrittenBullets": ["Top 5 most impactful revised bullets showcasing both technical expertise and cross-industry value"]
 }
 
@@ -136,10 +162,13 @@ CRITICAL FORMATTING RULES (ATS-Friendly & Professional):
 
 CONTENT REQUIREMENTS:
 - Extract ALL experience entries from original resume
+- Extract ALL projects from original resume with their technologies and achievements
+- Organize skills into logical categories (Programming/Tools, Data Science, Soft Skills, etc.)
+- Format education chronologically (MOST RECENT FIRST) with each degree as separate entry
+- Extract honors, awards, and professional affiliations
 - Preserve truthfulness - enhance phrasing but never fabricate experience
 - Naturally incorporate relevant keywords from job description
 - Highlight transferable skills valuable in any industry
-- For skills section, use plain text format (no charts/bars) with standard terminology
 - Balance technical depth with cross-industry appeal`;
 
     const resumeResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {

@@ -71,7 +71,7 @@ export const generateResumeDocument = async (result: AnalysisResult, originalRes
             }),
           ] : []),
 
-          // Skills Section - Place before Experience for technical roles
+          // Skills Section - Now organized by categories after Education
           new Paragraph({
             children: [
               new TextRun({
@@ -91,12 +91,158 @@ export const generateResumeDocument = async (result: AnalysisResult, originalRes
               },
             },
           }),
-          new Paragraph({
-            text: [...result.revisedResume.skills.revised, ...result.revisedResume.skills.added].join(" • "),
-            spacing: { after: 250, line: 360 },
-          }),
+          ...result.revisedResume.skills.categories.flatMap(category => [
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `${category.name}: `,
+                  bold: true,
+                  size: 22,
+                }),
+                new TextRun({
+                  text: category.skills.join(", "),
+                  size: 22,
+                }),
+              ],
+              spacing: { after: 120, line: 360 },
+              bullet: { level: 0 },
+              indent: { left: 360 },
+            }),
+          ]),
+          ...(result.revisedResume.skills.added.length > 0 ? [
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: "Additional Skills: ",
+                  bold: true,
+                  size: 22,
+                }),
+                new TextRun({
+                  text: result.revisedResume.skills.added.join(", "),
+                  size: 22,
+                }),
+              ],
+              spacing: { after: 250, line: 360 },
+              bullet: { level: 0 },
+              indent: { left: 360 },
+            }),
+          ] : []),
 
-          // Experience Section
+          // Education Section - Now placed after Summary, before Skills
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "EDUCATION",
+                bold: true,
+                size: 24,
+                allCaps: true,
+              }),
+            ],
+            spacing: { before: 100, after: 150 },
+            border: {
+              bottom: {
+                color: "000000",
+                space: 1,
+                style: "single",
+                size: 6,
+              },
+            },
+          }),
+          ...result.revisedResume.education.map((edu, index) => 
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `${edu.degree} | ${edu.institution}`,
+                  bold: true,
+                  size: 22,
+                }),
+                new TextRun({
+                  text: ` | ${edu.dates}`,
+                  size: 22,
+                }),
+                ...(edu.details ? [
+                  new TextRun({
+                    text: `\n${edu.details}`,
+                    size: 20,
+                  }),
+                ] : []),
+              ],
+              spacing: { 
+                after: index === result.revisedResume.education.length - 1 ? 250 : 120, 
+                line: 360 
+              },
+            })
+          ),
+
+          // Projects Section
+          ...(result.revisedResume.projects && result.revisedResume.projects.length > 0 ? [
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: "PROJECTS",
+                  bold: true,
+                  size: 24,
+                  allCaps: true,
+                }),
+              ],
+              spacing: { before: 100, after: 150 },
+              border: {
+                bottom: {
+                  color: "000000",
+                  space: 1,
+                  style: "single",
+                  size: 6,
+                },
+              },
+            }),
+            ...result.revisedResume.projects.flatMap((project) => [
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: project.title,
+                    bold: true,
+                    size: 22,
+                  }),
+                ],
+                spacing: { before: 200 },
+              }),
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: project.description,
+                    size: 20,
+                  }),
+                ],
+                spacing: { after: 60 },
+              }),
+              new Paragraph({
+                children: [
+                  new TextRun({
+                    text: "Technologies: ",
+                    bold: true,
+                    size: 20,
+                  }),
+                  new TextRun({
+                    text: project.technologies.join(", "),
+                    italics: true,
+                    size: 20,
+                  }),
+                ],
+                spacing: { after: 100 },
+              }),
+              ...project.bullets.map(
+                (bullet) =>
+                  new Paragraph({
+                    text: bullet,
+                    bullet: { level: 0 },
+                    spacing: { after: 80, line: 360 },
+                    indent: { left: 360 },
+                  })
+              ),
+            ]),
+          ] : []),
+
+          // Professional Experience Section
           new Paragraph({
             children: [
               new TextRun({
@@ -122,7 +268,7 @@ export const generateResumeDocument = async (result: AnalysisResult, originalRes
                 new TextRun({
                   text: exp.title,
                   bold: true,
-                  size: 22, // 11pt
+                  size: 22,
                 }),
                 new TextRun({
                   text: ` | ${exp.company}`,
@@ -147,36 +293,43 @@ export const generateResumeDocument = async (result: AnalysisResult, originalRes
                 new Paragraph({
                   text: bullet,
                   bullet: { level: 0 },
-                  spacing: { after: 80, line: 360 }, // Better spacing between bullets
-                  indent: { left: 360 }, // Proper bullet indentation
+                  spacing: { after: 80, line: 360 },
+                  indent: { left: 360 },
                 })
             ),
           ]),
 
-          // Education Section
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: "EDUCATION",
-                bold: true,
-                size: 24,
-                allCaps: true,
-              }),
-            ],
-            spacing: { before: 100, after: 150 },
-            border: {
-              bottom: {
-                color: "000000",
-                space: 1,
-                style: "single",
-                size: 6,
+          // Honors & Affiliations Section
+          ...(result.revisedResume.honors && result.revisedResume.honors.length > 0 ? [
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: "HONORS & AFFILIATIONS",
+                  bold: true,
+                  size: 24,
+                  allCaps: true,
+                }),
+              ],
+              spacing: { before: 100, after: 150 },
+              border: {
+                bottom: {
+                  color: "000000",
+                  space: 1,
+                  style: "single",
+                  size: 6,
+                },
               },
-            },
-          }),
-          new Paragraph({
-            text: result.revisedResume.education.revised,
-            spacing: { after: 200, line: 360 },
-          }),
+            }),
+            ...result.revisedResume.honors.map(
+              (honor) =>
+                new Paragraph({
+                  text: honor,
+                  bullet: { level: 0 },
+                  spacing: { after: 120, line: 360 },
+                  indent: { left: 360 },
+                })
+            ),
+          ] : []),
         ],
       },
     ],
