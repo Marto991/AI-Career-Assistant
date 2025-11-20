@@ -30,11 +30,13 @@ const RevisedResumeDisplay = ({ result }: RevisedResumeDisplayProps) => {
       </div>
 
       <Tabs defaultValue="summary" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="summary">Summary</TabsTrigger>
-          <TabsTrigger value="experience">Experience</TabsTrigger>
-          <TabsTrigger value="skills">Skills</TabsTrigger>
           <TabsTrigger value="education">Education</TabsTrigger>
+          <TabsTrigger value="skills">Skills</TabsTrigger>
+          <TabsTrigger value="projects">Projects</TabsTrigger>
+          <TabsTrigger value="experience">Experience</TabsTrigger>
+          <TabsTrigger value="honors">Honors</TabsTrigger>
         </TabsList>
 
         {/* Summary Tab */}
@@ -145,12 +147,19 @@ const RevisedResumeDisplay = ({ result }: RevisedResumeDisplayProps) => {
           )}
 
           <div className="p-4 bg-accent/5 rounded-lg border-2 border-accent/20">
-            <p className="text-xs font-semibold text-accent mb-3">REVISED & ENHANCED</p>
-            <div className="flex flex-wrap gap-2">
-              {result.revisedResume.skills.revised.map((skill, idx) => (
-                <Badge key={idx} variant="secondary">
-                  {skill}
-                </Badge>
+            <p className="text-xs font-semibold text-accent mb-3">ORGANIZED BY CATEGORY</p>
+            <div className="space-y-4">
+              {result.revisedResume.skills.categories.map((category, catIdx) => (
+                <div key={catIdx}>
+                  <p className="text-sm font-semibold mb-2">{category.name}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {category.skills.map((skill, skillIdx) => (
+                      <Badge key={skillIdx} variant="secondary">
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           </div>
@@ -178,27 +187,74 @@ const RevisedResumeDisplay = ({ result }: RevisedResumeDisplayProps) => {
             <h3 className="text-lg font-semibold">Education</h3>
           </div>
 
-          {showComparison && result.revisedResume.education.original && (
-            <div className="space-y-3">
-              <div className="p-4 bg-muted/30 rounded-lg border border-muted">
-                <p className="text-xs font-semibold text-muted-foreground mb-2">ORIGINAL</p>
-                <p className="text-sm whitespace-pre-wrap">{result.revisedResume.education.original}</p>
+          <div className="space-y-4">
+            {result.revisedResume.education.map((edu, idx) => (
+              <div key={idx} className="p-4 bg-accent/5 rounded-lg border-2 border-accent/20">
+                <p className="font-bold text-base">{edu.degree}</p>
+                <p className="text-sm text-muted-foreground">{edu.institution}</p>
+                <p className="text-sm text-muted-foreground">{edu.dates}</p>
+                {edu.details && (
+                  <p className="text-sm mt-2">{edu.details}</p>
+                )}
               </div>
-              <div className="flex justify-center">
-                <div className="p-2 bg-accent/10 rounded-full">
-                  <CheckCircle2 className="w-4 h-4 text-accent" />
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="p-4 bg-accent/5 rounded-lg border-2 border-accent/20">
-            <p className="text-xs font-semibold text-accent mb-2">REVISED</p>
-            <p className="text-sm whitespace-pre-wrap leading-relaxed">
-              {result.revisedResume.education.revised}
-            </p>
+            ))}
           </div>
         </TabsContent>
+
+        {/* Projects Tab */}
+        {result.revisedResume.projects && result.revisedResume.projects.length > 0 && (
+          <TabsContent value="projects" className="space-y-6 mt-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Briefcase className="w-5 h-5 text-accent" />
+              <h3 className="text-lg font-semibold">Projects</h3>
+            </div>
+
+            {result.revisedResume.projects.map((project, idx) => (
+              <div key={idx} className="space-y-3 pb-6 border-b last:border-b-0">
+                <div className="p-4 bg-accent/5 rounded-lg border-2 border-accent/20">
+                  <h4 className="font-bold text-base mb-2">{project.title}</h4>
+                  <p className="text-sm text-muted-foreground mb-2">{project.description}</p>
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {project.technologies.map((tech, techIdx) => (
+                      <Badge key={techIdx} variant="outline" className="text-xs">
+                        {tech}
+                      </Badge>
+                    ))}
+                  </div>
+                  <div className="space-y-2 mt-3">
+                    {project.bullets.map((bullet, bIdx) => (
+                      <div key={bIdx} className="flex items-start gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                        <p className="text-sm">{bullet}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </TabsContent>
+        )}
+
+        {/* Honors Tab */}
+        {result.revisedResume.honors && result.revisedResume.honors.length > 0 && (
+          <TabsContent value="honors" className="space-y-4 mt-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Award className="w-5 h-5 text-accent" />
+              <h3 className="text-lg font-semibold">Honors & Affiliations</h3>
+            </div>
+
+            <div className="p-4 bg-accent/5 rounded-lg border-2 border-accent/20">
+              <div className="space-y-3">
+                {result.revisedResume.honors.map((honor, idx) => (
+                  <div key={idx} className="flex items-start gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                    <p className="text-sm">{honor}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </TabsContent>
+        )}
       </Tabs>
     </Card>
   );

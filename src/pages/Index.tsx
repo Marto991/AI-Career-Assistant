@@ -27,13 +27,25 @@ export interface AnalysisResult {
     }>;
     skills: {
       original: string[];
-      revised: string[];
+      categories: Array<{
+        name: string;
+        skills: string[];
+      }>;
       added: string[];
     };
-    education: {
-      original: string;
-      revised: string;
-    };
+    projects: Array<{
+      title: string;
+      description: string;
+      technologies: string[];
+      bullets: string[];
+    }>;
+    education: Array<{
+      degree: string;
+      institution: string;
+      dates: string;
+      details?: string;
+    }>;
+    honors: string[];
   };
 }
 
