@@ -21,32 +21,100 @@ export const generateResumeDocument = async (result: AnalysisResult, originalRes
           },
         },
         children: [
-          // Header with contact info
+          // Header with contact info - Professional sizing (16-18pt equivalent)
           new Paragraph({
-            text: contactInfo,
-            heading: HeadingLevel.TITLE,
+            children: [
+              new TextRun({
+                text: contactInfo.split('\n')[0], // Name on first line
+                bold: true,
+                size: 32, // 16pt (size is in half-points)
+              }),
+            ],
             alignment: AlignmentType.CENTER,
-            spacing: { after: 200 },
+            spacing: { after: 100 },
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: contactInfo.split('\n').slice(1).join(' | '), // Contact details on one line with pipes
+                size: 20, // 10pt
+              }),
+            ],
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 300 },
           }),
 
-          // Professional Summary
+          // Professional Summary - Critical first section
           ...(result.revisedResume.summary.revised ? [
             new Paragraph({
-              text: "PROFESSIONAL SUMMARY",
-              heading: HeadingLevel.HEADING_1,
-              spacing: { before: 200, after: 100 },
+              children: [
+                new TextRun({
+                  text: "PROFESSIONAL SUMMARY",
+                  bold: true,
+                  size: 24, // 12pt
+                  allCaps: true,
+                }),
+              ],
+              spacing: { before: 100, after: 150 },
+              border: {
+                bottom: {
+                  color: "000000",
+                  space: 1,
+                  style: "single",
+                  size: 6,
+                },
+              },
             }),
             new Paragraph({
               text: result.revisedResume.summary.revised,
-              spacing: { after: 200 },
+              spacing: { after: 250, line: 360 }, // 1.5 line spacing
             }),
           ] : []),
 
+          // Skills Section - Place before Experience for technical roles
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "TECHNICAL SKILLS",
+                bold: true,
+                size: 24,
+                allCaps: true,
+              }),
+            ],
+            spacing: { before: 100, after: 150 },
+            border: {
+              bottom: {
+                color: "000000",
+                space: 1,
+                style: "single",
+                size: 6,
+              },
+            },
+          }),
+          new Paragraph({
+            text: [...result.revisedResume.skills.revised, ...result.revisedResume.skills.added].join(" • "),
+            spacing: { after: 250, line: 360 },
+          }),
+
           // Experience Section
           new Paragraph({
-            text: "PROFESSIONAL EXPERIENCE",
-            heading: HeadingLevel.HEADING_1,
-            spacing: { before: 200, after: 100 },
+            children: [
+              new TextRun({
+                text: "PROFESSIONAL EXPERIENCE",
+                bold: true,
+                size: 24,
+                allCaps: true,
+              }),
+            ],
+            spacing: { before: 100, after: 150 },
+            border: {
+              bottom: {
+                color: "000000",
+                space: 1,
+                style: "single",
+                size: 6,
+              },
+            },
           }),
           ...result.revisedResume.experience.flatMap((exp) => [
             new Paragraph({
@@ -54,52 +122,60 @@ export const generateResumeDocument = async (result: AnalysisResult, originalRes
                 new TextRun({
                   text: exp.title,
                   bold: true,
+                  size: 22, // 11pt
                 }),
                 new TextRun({
                   text: ` | ${exp.company}`,
+                  size: 22,
                 }),
               ],
-              spacing: { before: 100 },
+              spacing: { before: 200 },
             }),
             new Paragraph({
               children: [
                 new TextRun({
                   text: exp.dates,
                   italics: true,
+                  size: 20,
                 }),
-                ...(exp.location ? [new TextRun({ text: ` | ${exp.location}`, italics: true })] : []),
+                ...(exp.location ? [new TextRun({ text: ` | ${exp.location}`, italics: true, size: 20 })] : []),
               ],
-              spacing: { after: 50 },
+              spacing: { after: 100 },
             }),
             ...exp.revisedBullets.map(
               (bullet) =>
                 new Paragraph({
                   text: bullet,
                   bullet: { level: 0 },
-                  spacing: { after: 50 },
+                  spacing: { after: 80, line: 360 }, // Better spacing between bullets
+                  indent: { left: 360 }, // Proper bullet indentation
                 })
             ),
           ]),
 
-          // Skills Section
-          new Paragraph({
-            text: "SKILLS",
-            heading: HeadingLevel.HEADING_1,
-            spacing: { before: 200, after: 100 },
-          }),
-          new Paragraph({
-            text: [...result.revisedResume.skills.revised, ...result.revisedResume.skills.added].join(" • "),
-            spacing: { after: 200 },
-          }),
-
           // Education Section
           new Paragraph({
-            text: "EDUCATION",
-            heading: HeadingLevel.HEADING_1,
-            spacing: { before: 200, after: 100 },
+            children: [
+              new TextRun({
+                text: "EDUCATION",
+                bold: true,
+                size: 24,
+                allCaps: true,
+              }),
+            ],
+            spacing: { before: 100, after: 150 },
+            border: {
+              bottom: {
+                color: "000000",
+                space: 1,
+                style: "single",
+                size: 6,
+              },
+            },
           }),
           new Paragraph({
             text: result.revisedResume.education.revised,
+            spacing: { after: 200, line: 360 },
           }),
         ],
       },

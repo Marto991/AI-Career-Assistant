@@ -81,9 +81,9 @@ Return ONLY a JSON object with this exact structure:
     console.log("Analysis complete:", analysis);
 
     // Step 2: Generate complete revised resume
-    const resumeRevisionPrompt = `You are an expert resume writer and ATS optimization specialist. Analyze the resume and create a comprehensive revision tailored to the job description.
+    const resumeRevisionPrompt = `You are an expert resume writer and ATS optimization specialist with deep expertise in creating professional, recruiter-friendly resumes. Analyze the resume and create a comprehensive revision tailored to the job description.
 
-Parse the original resume and provide revisions for EACH section with specific improvements:
+Parse the original resume and provide revisions for EACH section with specific improvements following professional resume best practices:
 
 Job Description:
 ${jobDescription}
@@ -98,7 +98,7 @@ Return ONLY a JSON object with this exact structure:
 {
   "summary": {
     "original": "extracted original summary/objective if present, or empty string",
-    "revised": "compelling ATS-optimized summary highlighting relevant skills and achievements"
+    "revised": "2-3 sentence professional summary emphasizing multidisciplinary background, technical competencies, and cross-industry adaptability. Use phrases like 'leveraging data-driven insights across domains' to signal versatility."
   },
   "experience": [
     {
@@ -107,27 +107,40 @@ Return ONLY a JSON object with this exact structure:
       "dates": "date range",
       "location": "location if available",
       "originalBullets": ["original bullet 1", "original bullet 2", ...],
-      "revisedBullets": ["optimized bullet with quantifiable achievements", ...]
+      "revisedBullets": ["Each bullet MUST: (1) Start with strong action verb (Managed, Led, Developed, Implemented, Optimized, etc.), (2) Include specific quantifiable results with numbers/percentages when possible (e.g., 'reduced costs by 15%', 'improved efficiency by 30%'), (3) Follow parallel structure across all bullets, (4) Use past tense for completed work, present tense only for current role, (5) Be 1-2 concise lines maximum, (6) Emphasize both technical skills AND transferable skills (leadership, communication, analytical thinking), (7) Tie achievements to business outcomes"]
     }
   ],
   "skills": {
     "original": ["skill1", "skill2", ...],
-    "revised": ["optimized skill1", "skill2", ...],
-    "added": ["new relevant skill from job description", ...]
+    "revised": ["Technical skills using standard terminology (Python, SQL, Machine Learning, Tableau, etc.) AND transferable skills (Leadership, Communication, Problem-solving, Team Collaboration)"],
+    "added": ["Relevant technical and soft skills from job description not present in original resume"]
   },
   "education": {
     "original": "original education section text",
-    "revised": "enhanced education section with relevant coursework/achievements"
+    "revised": "Enhanced education section with degree, institution, relevant coursework, and academic achievements"
   },
-  "rewrittenBullets": ["top 5 most impactful revised bullets for quick reference"]
+  "rewrittenBullets": ["Top 5 most impactful revised bullets showcasing both technical expertise and cross-industry value"]
 }
 
-Important:
-- Extract ALL experience bullets from the original resume
-- Revise each bullet to be achievement-oriented with quantifiable results
-- Add relevant keywords from the job description naturally
-- Maintain truthfulness - enhance phrasing but don't fabricate experience
-- For skills, identify gaps between resume and job requirements`;
+CRITICAL FORMATTING RULES (ATS-Friendly & Professional):
+- ALL bullets MUST start with strong action verbs in consistent tense
+- EVERY bullet MUST follow parallel grammatical structure
+- Include SPECIFIC numbers, percentages, or metrics wherever possible
+- Avoid vague statements - be concrete and results-focused
+- Use 1-2 lines per bullet maximum for scannability
+- Emphasize BOTH technical competencies AND soft skills (leadership, communication, analytical thinking)
+- Use standard industry terminology that ATS systems recognize
+- Present candidate as versatile professional who applies technical skills across various settings
+- No generic phrases like "responsible for" - always achievement-oriented
+- Current roles use present tense, past roles use past tense consistently
+
+CONTENT REQUIREMENTS:
+- Extract ALL experience entries from original resume
+- Preserve truthfulness - enhance phrasing but never fabricate experience
+- Naturally incorporate relevant keywords from job description
+- Highlight transferable skills valuable in any industry
+- For skills section, use plain text format (no charts/bars) with standard terminology
+- Balance technical depth with cross-industry appeal`;
 
     const resumeResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
