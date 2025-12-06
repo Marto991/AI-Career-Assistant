@@ -339,37 +339,80 @@ export const generateResumeDocument = async (result: AnalysisResult, originalRes
 };
 
 export const generateCoverLetterDocument = (coverLetter: string, contactInfo: string) => {
+  const contactLines = contactInfo.split('\n').filter(line => line.trim());
+  const name = contactLines[0] || '';
+  const contactDetails = contactLines.slice(1).join(' | ');
+
+  // Parse cover letter paragraphs, filtering empty ones
+  const paragraphs = coverLetter.split('\n\n').filter(p => p.trim());
+
   const doc = new Document({
     sections: [
       {
         properties: {
           page: {
             margin: {
-              top: convertInchesToTwip(1),
+              top: convertInchesToTwip(0.75),
               right: convertInchesToTwip(1),
-              bottom: convertInchesToTwip(1),
+              bottom: convertInchesToTwip(0.75),
               left: convertInchesToTwip(1),
             },
           },
         },
         children: [
+          // Header - Name centered and bold (matching resume style)
           new Paragraph({
-            text: contactInfo,
-            spacing: { after: 200 },
+            children: [
+              new TextRun({
+                text: name,
+                bold: true,
+                size: 32, // 16pt
+              }),
+            ],
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 100 },
           }),
+          // Contact details on one line with pipes (matching resume style)
           new Paragraph({
-            text: new Date().toLocaleDateString('en-US', { 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
-            }),
-            spacing: { after: 200 },
+            children: [
+              new TextRun({
+                text: contactDetails,
+                size: 20, // 10pt
+              }),
+            ],
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 400 },
           }),
-          ...coverLetter.split('\n\n').map(
-            (para) =>
+          // Date - right aligned
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: new Date().toLocaleDateString('en-US', { 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                }),
+                size: 22,
+              }),
+            ],
+            alignment: AlignmentType.LEFT,
+            spacing: { after: 400 },
+          }),
+          // Cover letter body paragraphs - justified for even distribution
+          ...paragraphs.map(
+            (para, index) =>
               new Paragraph({
-                text: para.trim(),
-                spacing: { after: 200 },
+                children: [
+                  new TextRun({
+                    text: para.trim(),
+                    size: 22, // 11pt
+                  }),
+                ],
+                alignment: AlignmentType.JUSTIFIED,
+                spacing: { 
+                  after: index === paragraphs.length - 1 ? 0 : 280,
+                  line: 276, // 1.15 line spacing
+                },
               })
           ),
         ],
