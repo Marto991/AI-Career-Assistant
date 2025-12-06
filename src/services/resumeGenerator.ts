@@ -71,7 +71,53 @@ export const generateResumeDocument = async (result: AnalysisResult, originalRes
             }),
           ] : []),
 
-          // Skills Section - Now organized by categories after Education
+          // Education Section - Placed right after Professional Summary
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: "EDUCATION",
+                bold: true,
+                size: 24,
+                allCaps: true,
+              }),
+            ],
+            spacing: { before: 100, after: 150 },
+            border: {
+              bottom: {
+                color: "000000",
+                space: 1,
+                style: "single",
+                size: 6,
+              },
+            },
+          }),
+          ...result.revisedResume.education.map((edu, index) => 
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `${edu.degree} | ${edu.institution}`,
+                  bold: true,
+                  size: 22,
+                }),
+                new TextRun({
+                  text: ` | ${edu.dates}`,
+                  size: 22,
+                }),
+                ...(edu.details ? [
+                  new TextRun({
+                    text: `\n${edu.details}`,
+                    size: 20,
+                  }),
+                ] : []),
+              ],
+              spacing: { 
+                after: index === result.revisedResume.education.length - 1 ? 250 : 120, 
+                line: 360 
+              },
+            })
+          ),
+
+          // Skills Section - Organized by categories
           new Paragraph({
             children: [
               new TextRun({
@@ -127,52 +173,6 @@ export const generateResumeDocument = async (result: AnalysisResult, originalRes
               indent: { left: 360 },
             }),
           ] : []),
-
-          // Education Section - Now placed after Summary, before Skills
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: "EDUCATION",
-                bold: true,
-                size: 24,
-                allCaps: true,
-              }),
-            ],
-            spacing: { before: 100, after: 150 },
-            border: {
-              bottom: {
-                color: "000000",
-                space: 1,
-                style: "single",
-                size: 6,
-              },
-            },
-          }),
-          ...result.revisedResume.education.map((edu, index) => 
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: `${edu.degree} | ${edu.institution}`,
-                  bold: true,
-                  size: 22,
-                }),
-                new TextRun({
-                  text: ` | ${edu.dates}`,
-                  size: 22,
-                }),
-                ...(edu.details ? [
-                  new TextRun({
-                    text: `\n${edu.details}`,
-                    size: 20,
-                  }),
-                ] : []),
-              ],
-              spacing: { 
-                after: index === result.revisedResume.education.length - 1 ? 250 : 120, 
-                line: 360 
-              },
-            })
-          ),
 
           // Projects Section
           ...(result.revisedResume.projects && result.revisedResume.projects.length > 0 ? [
