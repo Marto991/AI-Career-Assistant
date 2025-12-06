@@ -199,7 +199,26 @@ CONTENT REQUIREMENTS:
     console.log("Complete resume revision generated");
 
     // Step 3: Generate cover letter
-    const coverLetterPrompt = `Write a compelling, personalized cover letter for this job application. Use the candidate's background and the key alignments to craft a narrative that demonstrates fit. Keep it professional, concise (3-4 paragraphs), and highlight quantifiable achievements.
+    const coverLetterPrompt = `You are an expert career coach writing a compelling, personalized cover letter for this job application.
+
+TONE & STYLE GUIDELINES:
+- Professional yet warm and engaging - avoid stiff, robotic language
+- Confident but not arrogant - demonstrate genuine enthusiasm
+- Conversational flow while maintaining formality appropriate for business correspondence
+- Use active voice and strong action verbs
+- Show personality and authenticity
+
+STRUCTURE (4 paragraphs):
+1. OPENING HOOK: Start with an engaging statement that captures attention - reference something specific about the company, role, or industry. Avoid generic openings like "I am writing to apply for..."
+2. VALUE PROPOSITION: Highlight 2-3 key achievements with specific metrics that directly align with job requirements. Connect your experience to their needs.
+3. CULTURAL FIT & MOTIVATION: Demonstrate knowledge of the company and explain why you're genuinely interested. Show how your values align with theirs.
+4. STRONG CLOSE: End with confidence and a clear call to action. Express enthusiasm for discussing how you can contribute.
+
+FORMATTING:
+- Include professional greeting (Dear Hiring Manager or specific name if known)
+- Each paragraph should be 3-5 sentences
+- Include professional closing (Sincerely, Best regards, etc.)
+- Add placeholder for candidate's name at the end
 
 Job Description:
 ${jobDescription}
@@ -207,10 +226,10 @@ ${jobDescription}
 Resume:
 ${resume}
 
-Key Alignments:
+Key Alignments to emphasize:
 ${analysis.alignments.map((a: any) => `- ${a.requirement}: ${a.match}`).join('\n')}
 
-Write the complete cover letter as plain text (no JSON, no markdown). Include a professional greeting and closing.`;
+Write the complete cover letter as plain text. Make it compelling, specific, and memorable.`;
 
     const coverLetterResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -235,19 +254,24 @@ Write the complete cover letter as plain text (no JSON, no markdown). Include a 
     const coverLetter = coverLetterData.choices[0].message.content;
     console.log("Cover letter generated");
 
-    // Combine results
+    // Combine results - include ALL sections including projects and honors
     const result = {
       matchScore: analysis.matchScore,
       alignments: analysis.alignments,
-      rewrittenBullets: revisedResume.rewrittenBullets,
+      rewrittenBullets: revisedResume.rewrittenBullets || [],
       coverLetter,
       revisedResume: {
         summary: revisedResume.summary,
-        experience: revisedResume.experience,
+        experience: revisedResume.experience || [],
         skills: revisedResume.skills,
-        education: revisedResume.education,
+        projects: revisedResume.projects || [],
+        education: revisedResume.education || [],
+        honors: revisedResume.honors || [],
       },
     };
+    
+    console.log("Final result includes projects:", result.revisedResume.projects?.length || 0);
+    console.log("Final result includes honors:", result.revisedResume.honors?.length || 0);
 
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
