@@ -208,17 +208,20 @@ TONE & STYLE GUIDELINES:
 - Use active voice and strong action verbs
 - Show personality and authenticity
 
-STRUCTURE (4 paragraphs):
+STRUCTURE (4 paragraphs, each separated by a BLANK LINE):
 1. OPENING HOOK: Start with an engaging statement that captures attention - reference something specific about the company, role, or industry. Avoid generic openings like "I am writing to apply for..."
 2. VALUE PROPOSITION: Highlight 2-3 key achievements with specific metrics that directly align with job requirements. Connect your experience to their needs.
 3. CULTURAL FIT & MOTIVATION: Demonstrate knowledge of the company and explain why you're genuinely interested. Show how your values align with theirs.
 4. STRONG CLOSE: End with confidence and a clear call to action. Express enthusiasm for discussing how you can contribute.
 
-FORMATTING:
-- Include professional greeting (Dear Hiring Manager or specific name if known)
+CRITICAL FORMATTING RULES:
+- Start with "Dear Hiring Manager," on its own line
+- Leave a BLANK LINE between greeting and first paragraph
+- Leave a BLANK LINE between EACH paragraph (very important for proper document formatting)
 - Each paragraph should be 3-5 sentences
-- Include professional closing (Sincerely, Best regards, etc.)
-- Add placeholder for candidate's name at the end
+- End with closing on its own line ("Sincerely," or "Best regards,")
+- Leave a BLANK LINE then the candidate's name placeholder "[Your Name]"
+- DO NOT include any contact info, date, or address at the beginning - those are added separately
 
 Job Description:
 ${jobDescription}
@@ -229,7 +232,7 @@ ${resume}
 Key Alignments to emphasize:
 ${analysis.alignments.map((a: any) => `- ${a.requirement}: ${a.match}`).join('\n')}
 
-Write the complete cover letter as plain text. Make it compelling, specific, and memorable.`;
+Write ONLY the body of the cover letter starting with "Dear Hiring Manager," - no header, no contact info, no date. Use blank lines between paragraphs.`;
 
     const coverLetterResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
