@@ -62,10 +62,9 @@ Return ONLY a JSON object with this exact structure:
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages: [
-          { role: "system", content: "You are a career analysis expert. Always respond with valid JSON only." },
+          { role: "system", content: "You are a career analysis expert. Always respond with valid JSON only. No markdown, no code blocks, just raw JSON." },
           { role: "user", content: analysisPrompt },
         ],
-        response_format: { type: "json_object" },
       }),
     });
 
@@ -180,10 +179,9 @@ CONTENT REQUIREMENTS:
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages: [
-          { role: "system", content: "You are a professional resume writer. Always respond with valid, complete JSON only." },
+          { role: "system", content: "You are a professional resume writer. Always respond with valid, complete JSON only. No markdown, no code blocks, just raw JSON." },
           { role: "user", content: resumeRevisionPrompt },
         ],
-        response_format: { type: "json_object" },
       }),
     });
 
