@@ -71,7 +71,7 @@ Return ONLY a JSON object with this exact structure:
     if (!analysisResponse.ok) {
       const errorText = await analysisResponse.text();
       console.error("Analysis API error:", analysisResponse.status, errorText);
-      throw new Error(`AI analysis failed: ${errorText}`);
+      throw new Error("ANALYSIS_FAILED");
     }
 
     const analysisData = await analysisResponse.json();
@@ -188,7 +188,7 @@ CONTENT REQUIREMENTS:
     if (!resumeResponse.ok) {
       const errorText = await resumeResponse.text();
       console.error("Resume revision API error:", resumeResponse.status, errorText);
-      throw new Error(`Failed to generate revised resume: ${errorText}`);
+      throw new Error("RESUME_REVISION_FAILED");
     }
 
     const resumeData = await resumeResponse.json();
@@ -278,9 +278,13 @@ Write ONLY the body of the cover letter starting with "Dear Hiring Manager," - n
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error in analyze-resume function:", error);
+    console.error("Error in analyze-resume function:", {
+      error: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : undefined,
+      timestamp: new Date().toISOString(),
+    });
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ error: "Unable to process your request. Please try again later.", code: "PROCESSING_ERROR" }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
