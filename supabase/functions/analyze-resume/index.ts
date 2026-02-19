@@ -60,7 +60,7 @@ Return ONLY a JSON object with this exact structure:
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "openai/gpt-5-mini",
         messages: [
           { role: "system", content: "You are a career analysis expert. Always respond with valid JSON only. No markdown, no code blocks, just raw JSON." },
           { role: "user", content: analysisPrompt },
@@ -177,7 +177,7 @@ CONTENT REQUIREMENTS:
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "openai/gpt-5-mini",
         messages: [
           { role: "system", content: "You are a professional resume writer. Always respond with valid, complete JSON only. No markdown, no code blocks, just raw JSON." },
           { role: "user", content: resumeRevisionPrompt },
@@ -239,7 +239,7 @@ Write ONLY the body of the cover letter starting with "Dear Hiring Manager," - n
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "openai/gpt-5-mini",
         messages: [
           { role: "system", content: "You are a professional career writer specializing in cover letters." },
           { role: "user", content: coverLetterPrompt },
