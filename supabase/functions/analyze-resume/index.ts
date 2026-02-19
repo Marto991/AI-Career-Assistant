@@ -1,10 +1,14 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+const MAX_RESUME_LENGTH = 15000;
+const MAX_JOB_DESC_LENGTH = 8000;
 
 // Helper function to clean JSON from markdown code blocks
 function cleanJsonResponse(content: string): string {
@@ -18,14 +22,66 @@ serve(async (req) => {
   }
 
   try {
-    const { resume, jobDescription } = await req.json();
+    // Authentication check
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: authError } = await supabaseClient.auth.getClaims(token);
+    if (authError || !claimsData?.claims) {
+      return new Response(
+        JSON.stringify({ error: "Unauthorized" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Input validation
+    const body = await req.json();
+    const { resume, jobDescription } = body;
+
+    if (!resume || typeof resume !== "string" || resume.trim().length < 50) {
+      return new Response(
+        JSON.stringify({ error: "Resume must be at least 50 characters." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    if (!jobDescription || typeof jobDescription !== "string" || jobDescription.trim().length < 20) {
+      return new Response(
+        JSON.stringify({ error: "Job description must be at least 20 characters." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    if (resume.length > MAX_RESUME_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: `Resume must not exceed ${MAX_RESUME_LENGTH} characters.` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    if (jobDescription.length > MAX_JOB_DESC_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: `Job description must not exceed ${MAX_JOB_DESC_LENGTH} characters.` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    console.log("Analyzing resume and job description...");
+    console.log("Analyzing resume and job description for user:", claimsData.claims.sub);
 
     // Step 1: Extract requirements and calculate match score
     const analysisPrompt = `You are an expert career coach and ATS (Applicant Tracking System) analyzer. 
