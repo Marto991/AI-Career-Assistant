@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -22,48 +21,9 @@ serve(async (req) => {
   }
 
   try {
-    // Authentication check
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(
-        JSON.stringify({ error: "Unauthorized" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-      { global: { headers: { Authorization: authHeader } } }
-    );
-
-    const token = authHeader.replace("Bearer ", "");
-    const authApi = supabaseClient.auth as any;
-    let userId: string | undefined;
-
-    if (typeof authApi.getClaims === "function") {
-      const { data: claimsData, error: authError } = await authApi.getClaims(token);
-      userId = claimsData?.claims?.sub;
-
-      if (authError || !userId) {
-        return new Response(
-          JSON.stringify({ error: "Unauthorized" }),
-          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-    } else {
-      // Backward-compatible path for older @supabase/supabase-js builds
-      const { data: userData, error: userError } = await authApi.getUser(token);
-      userId = userData?.user?.id;
-
-      if (userError || !userId) {
-        return new Response(
-          JSON.stringify({ error: "Unauthorized" }),
-          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-    }
-
+    // Input validation
+    const body = await req.json();
+    const { resume, jobDescription } = body;
     // Input validation
     const body = await req.json();
     const { resume, jobDescription } = body;
@@ -99,7 +59,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    console.log("Analyzing resume and job description for user:", userId);
+    console.log("Analyzing resume and job description...");
 
     // Step 1: Extract requirements and calculate match score
     const analysisPrompt = `You are an expert career coach and ATS (Applicant Tracking System) analyzer. 
