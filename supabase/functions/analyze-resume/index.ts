@@ -38,12 +38,30 @@ serve(async (req) => {
     );
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: authError } = await supabaseClient.auth.getClaims(token);
-    if (authError || !claimsData?.claims) {
-      return new Response(
-        JSON.stringify({ error: "Unauthorized" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    const authApi = supabaseClient.auth as any;
+    let userId: string | undefined;
+
+    if (typeof authApi.getClaims === "function") {
+      const { data: claimsData, error: authError } = await authApi.getClaims(token);
+      userId = claimsData?.claims?.sub;
+
+      if (authError || !userId) {
+        return new Response(
+          JSON.stringify({ error: "Unauthorized" }),
+          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    } else {
+      // Backward-compatible path for older @supabase/supabase-js builds
+      const { data: userData, error: userError } = await authApi.getUser(token);
+      userId = userData?.user?.id;
+
+      if (userError || !userId) {
+        return new Response(
+          JSON.stringify({ error: "Unauthorized" }),
+          { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
     }
 
     // Input validation
@@ -81,7 +99,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    console.log("Analyzing resume and job description for user:", claimsData.claims.sub);
+    console.log("Analyzing resume and job description for user:", userId);
 
     // Step 1: Extract requirements and calculate match score
     const analysisPrompt = `You are an expert career coach and ATS (Applicant Tracking System) analyzer. 
