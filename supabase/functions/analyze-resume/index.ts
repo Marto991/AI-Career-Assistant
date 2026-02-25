@@ -24,9 +24,6 @@ serve(async (req) => {
     // Input validation
     const body = await req.json();
     const { resume, jobDescription } = body;
-    // Input validation
-    const body = await req.json();
-    const { resume, jobDescription } = body;
 
     if (!resume || typeof resume !== "string" || resume.trim().length < 50) {
       return new Response(
