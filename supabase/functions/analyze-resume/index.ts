@@ -100,8 +100,7 @@ Return ONLY a JSON object with this exact structure:
     });
 
     if (!analysisResponse.ok) {
-      const errorText = await analysisResponse.text();
-      console.error("Analysis API error:", analysisResponse.status, errorText);
+      console.error("Analysis API error: status", analysisResponse.status);
       throw new Error("ANALYSIS_FAILED");
     }
 
@@ -217,8 +216,7 @@ CONTENT REQUIREMENTS:
     });
 
     if (!resumeResponse.ok) {
-      const errorText = await resumeResponse.text();
-      console.error("Resume revision API error:", resumeResponse.status, errorText);
+      console.error("Resume revision API error: status", resumeResponse.status);
       throw new Error("RESUME_REVISION_FAILED");
     }
 
@@ -311,7 +309,6 @@ Write ONLY the body of the cover letter starting with "Dear Hiring Manager," - n
   } catch (error) {
     console.error("Error in analyze-resume function:", {
       error: error instanceof Error ? error.message : "Unknown error",
-      stack: error instanceof Error ? error.stack : undefined,
       timestamp: new Date().toISOString(),
     });
     return new Response(
